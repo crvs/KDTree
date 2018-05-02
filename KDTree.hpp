@@ -11,14 +11,6 @@
  *
  */
 
-/*
- * TODO:
- * - separate out header
- * - create a KDTree class and wrap the basic queries in it
- * - make output of basic queries in terms of point_t rather than KDNodePtr
- * - add indexes
- */
-
 #include <algorithm>
 #include <functional>
 #include <memory>
