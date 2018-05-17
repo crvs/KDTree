@@ -94,7 +94,7 @@ class KDTree {
     );
 
     // default caller
-    KDNodePtr nearest_(const KDNodePtr &branch, const point_t &pt);
+    KDNodePtr nearest_(const point_t &pt);
 
    public:
     point_t nearest_point(const point_t &pt);

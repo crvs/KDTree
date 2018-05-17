@@ -18,13 +18,8 @@
 #include <vector>
 
 #include "KDTree.hpp"
-#include <iostream>
 
-
-KDNode::KDNode() {
-    //x = point_t(1);
-    //index = std::numeric_limits< size_t >::max();
-}
+KDNode::KDNode() = default;
 
 KDNode::KDNode(const point_t &pt, const size_t &idx_, const KDNodePtr &left_,
                const KDNodePtr &right_) {
@@ -42,7 +37,7 @@ KDNode::KDNode(const pointIndex &pi, const KDNodePtr &left_,
     right = right_;
 }
 
-KDNode::~KDNode(){};
+KDNode::~KDNode() = default;
 
 double KDNode::coord(const size_t &idx) { return x.at(idx); }
 KDNode::operator bool() { return (!x.empty()); }
@@ -55,17 +50,17 @@ KDNodePtr NewKDNodePtr() {
     return mynode;
 }
 
-inline double dist(const point_t &a, const point_t &b) {
+inline double dist2(const point_t &a, const point_t &b) {
     double distc = 0;
     for (size_t i = 0; i < a.size(); i++) {
-        double di = pow(a.at(i) - b.at(i), 2);
+        double di = a.at(i) - b.at(i);
         distc += di * di;
     }
     return distc;
 }
 
-inline double dist(const KDNodePtr &a, const KDNodePtr &b) {
-    return dist(a->x, b->x);
+inline double dist2(const KDNodePtr &a, const KDNodePtr &b) {
+    return dist2(a->x, b->x);
 }
 
 comparer::comparer(size_t idx_) : idx{idx_} {};
@@ -133,7 +128,7 @@ KDNodePtr KDTree::make_tree(const pointIndexArr::iterator &begin,  //
 }
 
 KDTree::KDTree(pointVec point_array) {
-    leaf = std::make_shared<KDNode>();
+    leaf = std::make_shared< KDNode >();
     // iterators
     pointIndexArr arr;
     for (size_t i = 0; i < point_array.size(); i++) {
@@ -165,7 +160,7 @@ KDNodePtr KDTree::nearest_(   //
     point_t branch_pt(*branch);
     size_t dim = branch_pt.size();
 
-    d = dist(branch_pt, pt);
+    d = dist2(branch_pt, pt);
     dx = branch_pt.at(level) - pt.at(level);
     dx2 = dx * dx;
 
@@ -193,7 +188,7 @@ KDNodePtr KDTree::nearest_(   //
     // keep nearest neighbor from further down the tree
     KDNodePtr further = nearest_(section, pt, next_lv, best_l, best_dist_l);
     if (!further->x.empty()) {
-        double dl = dist(further->x, pt);
+        double dl = dist2(further->x, pt);
         if (dl < best_dist_l) {
             best_dist_l = dl;
             best_l = further;
@@ -202,7 +197,7 @@ KDNodePtr KDTree::nearest_(   //
         if (dx2 < best_dist_l) {
             further = nearest_(other, pt, next_lv, best_l, best_dist_l);
             if (!further->x.empty()) {
-                dl = dist(further->x, pt);
+                dl = dist2(further->x, pt);
                 if (dl < best_dist_l) {
                     best_dist_l = dl;
                     best_l = further;
@@ -215,26 +210,26 @@ KDNodePtr KDTree::nearest_(   //
 };
 
 // default caller
-KDNodePtr KDTree::nearest_(const KDNodePtr &branch, const point_t &pt) {
+KDNodePtr KDTree::nearest_(const point_t &pt) {
     size_t level = 0;
     // KDNodePtr best = branch;
-    double branch_dist = dist(point_t(*branch), pt);
-    return nearest_(branch,        // beginning of tree
+    double branch_dist = dist2(point_t(*root), pt);
+    return nearest_(root,          // beginning of tree
                     pt,            // point we are querying
                     level,         // start from level 0
-                    branch,        // best = branch
+                    root,          // best is the root
                     branch_dist);  // best_dist = branch_dist
-}
+};
 
 point_t KDTree::nearest_point(const point_t &pt) {
-    return point_t(*nearest_(root, pt));
-}
+    return point_t(*nearest_(pt));
+};
 size_t KDTree::nearest_index(const point_t &pt) {
-    return size_t(*nearest_(root, pt));
-}
+    return size_t(*nearest_(pt));
+};
 
 pointIndex KDTree::nearest_pointIndex(const point_t &pt) {
-    KDNodePtr Nearest = nearest_(root, pt);
+    KDNodePtr Nearest = nearest_(pt);
     return pointIndex(point_t(*Nearest), size_t(*Nearest));
 }
 
@@ -256,7 +251,7 @@ pointIndexArr KDTree::neighborhood_(  //
 
     double r2 = rad * rad;
 
-    d = dist(point_t(*branch), pt);
+    d = dist2(point_t(*branch), pt);
     dx = point_t(*branch).at(level) - pt.at(level);
     dx2 = dx * dx;
 
