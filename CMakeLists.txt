@@ -16,6 +16,7 @@ set(CMAKE_RANLIB  "/usr/bin/gcc-ranlib")
 
 set(CMAKE_BUILD_TYPE Debug)
 
+include_directories(.)
 add_library(KDTree SHARED "KDTree.cpp")
 
 #add_executable(test_kdtree "test_kdtree.cpp")

@@ -82,6 +82,7 @@ class KDTree {
     );
 
    public:
+    KDTree() = default;
     explicit KDTree(pointVec point_array);
 
    private:
