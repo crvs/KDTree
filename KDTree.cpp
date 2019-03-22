@@ -195,15 +195,15 @@ KDNodePtr KDTree::nearest_(   //
             best_dist_l = dl;
             best_l = further;
         }
-        // only check the other branch if it makes sense to do so
-        if (dx2 < best_dist_l) {
-            further = nearest_(other, pt, next_lv, best_l, best_dist_l);
-            if (!further->x.empty()) {
-                dl = dist2(further->x, pt);
-                if (dl < best_dist_l) {
-                    best_dist_l = dl;
-                    best_l = further;
-                }
+    }
+    // only check the other branch if it makes sense to do so
+    if (dx2 < best_dist_l) {
+        further = nearest_(other, pt, next_lv, best_l, best_dist_l);
+        if (!further->x.empty()) {
+            double dl = dist2(further->x, pt);
+            if (dl < best_dist_l) {
+                best_dist_l = dl;
+                best_l = further;
             }
         }
     }
