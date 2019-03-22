@@ -10,6 +10,7 @@ Simple C++ static KD-Tree implementation with minimal functionality.
 	- nearest neighbor
 	- neighbors within a given distance
 
+## License and copyright
 
-
-
+© J. Frederico Carvalho
+Licensed under the [BSD3 License](LICENSE)
