@@ -49,6 +49,11 @@ using KDNodePtr = std::shared_ptr< KDNode >;
 
 KDNodePtr NewKDNodePtr();
 
+// square euclidean distance
+inline double dist2(const point_t &, const point_t &);
+inline double dist2(const KDNodePtr &, const KDNodePtr &);
+
+// euclidean distance
 inline double dist(const point_t &, const point_t &);
 inline double dist(const KDNodePtr &, const KDNodePtr &);
 

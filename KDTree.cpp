@@ -65,6 +65,14 @@ inline double dist2(const KDNodePtr &a, const KDNodePtr &b) {
     return dist2(a->x, b->x);
 }
 
+inline double dist(const point_t &a, const point_t &b) {
+    return std::sqrt(dist2(a, b));
+}
+
+inline double dist(const KDNodePtr &a, const KDNodePtr &b) {
+    return std::sqrt(dist2(a, b));
+}
+
 comparer::comparer(size_t idx_) : idx{idx_} {};
 
 inline bool comparer::compare_idx(const pointIndex &a,  //
