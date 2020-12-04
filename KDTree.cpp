@@ -90,7 +90,8 @@ inline void sort_on_idx(const pointIndexArr::iterator &begin,  //
     using std::placeholders::_1;
     using std::placeholders::_2;
 
-    std::sort(begin, end, std::bind(&comparer::compare_idx, comp, _1, _2));
+    std::nth_element(begin, begin + std::distance(begin, end) / 2,
+                     end, std::bind(&comparer::compare_idx, comp, _1, _2));
 }
 
 using pointVec = std::vector< point_t >;
