@@ -20,32 +20,32 @@ std::vector<double> generateVector()
     std::vector<double> temp(DIM);
 	for (size_t idx = 0; idx < DIM; idx++)
     {
-		temp[idx] = getNum();
+        temp[idx] = getNum();
     }
 	return temp;
 }
 
-std::vector<std::vector<double>> getListofGeneratedVectors(size_t length)
+std::vector<std::vector<double> > getListofGeneratedVectors(size_t length)
 {
-    std::vector<std::vector<double>> temp(length);
-	for (size_t idx = 0; idx < length; idx++)
+    std::vector<std::vector<double> > temp(length);
+    for (size_t idx = 0; idx < length; idx++)
     {
-		temp[idx] = generateVector();
+        temp[idx] = generateVector();
     }
-	return temp;
+    return temp;
 }
 
-snt main()
+int main()
 {
     // seed
-	srand(5);
+    srand(5);
 
     size_t npoints = 400000;
     std::cout << "constructing KDTree with " << npoints << " points." << std::endl;
 
-    td::vector<point_t> points = getListofGeneratedVectors(npoints);
+    std::vector<point_t> points = getListofGeneratedVectors(npoints);
 
-    uto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
     KDTree tree(points);
     auto stop = std::chrono::high_resolution_clock::now();
     auto timespan = std::chrono::duration<double>(stop - start);
