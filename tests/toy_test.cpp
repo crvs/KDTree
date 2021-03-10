@@ -12,15 +12,17 @@ int main() {
     pointVec points;
     point_t pt;
 
-    pt = {0.0, 0.0};
+    pt = {0.0, 0.0, 0.0};
     points.push_back(pt);
-    pt = {1.0, 0.0};
+    pt = {1.0, 0.0, 0.0};
     points.push_back(pt);
-    pt = {0.0, 1.0};
+    pt = {0.0, 1.0, 0.0};
     points.push_back(pt);
-    pt = {1.0, 1.0};
+    pt = {0.0, 0.0, 1.0};
     points.push_back(pt);
-    pt = {0.5, 0.5};
+    pt = {1.0, 1.0, 1.0};
+    points.push_back(pt);
+    pt = {0.5, 0.5, 0.5};
     points.push_back(pt);
 
     KDTree tree(points);

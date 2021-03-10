@@ -1,0 +1,7 @@
+{
+    "clangd.arguments": [],
+    "clangd.fallbackFlags": [
+        "--background-index"
+    ],
+    "debug.inlineValues": true
+}
