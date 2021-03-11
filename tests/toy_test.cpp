@@ -28,7 +28,7 @@ int main() {
     KDTree tree(points);
 
     std::cout << "nearest test\n";
-    pt = {0.8, 0.2};
+    pt = {0.8, 0.2, 0.1};
     auto res = tree.nearest_point(pt);
     for (double b : res) {
         std::cout << b << " ";

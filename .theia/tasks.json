@@ -6,7 +6,7 @@
         {
             "label": "build (debug)",
             "type": "shell",
-            "command": "mkdir -p cmake/debug/build && cd cmake/debug/build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ../../../ && make && cd -",
+            "command": "mkdir build && cd build && cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_BUILD_TYPE=Debug .. && mv -f compile_commands.json ../ && make && cd -",
             "group": {
                 "kind": "build",
                 "isDefault": true
