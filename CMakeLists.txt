@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(KDTree CXX)
 
-#set(CMAKE_CXX_COMPILER             "/usr/bin/g++")
 set(CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 set(CMAKE_CXX_FLAGS                "-Wall -std=c++14")
 set(CMAKE_CXX_FLAGS_DEBUG          "-g3")
@@ -21,7 +20,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 
-include_directories(.)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 add_library(KDTree SHARED KDTree.cpp)
-target_include_directories(KDTree PUBLIC .)
+target_include_directories(KDTree PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_subdirectory(tests)
