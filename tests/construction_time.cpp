@@ -35,7 +35,7 @@ std::vector<std::vector<double>> getListofGeneratedVectors(size_t length)
 	return temp;
 }
 
-snt main()
+int main()
 {
     // seed
 	srand(5);
@@ -43,9 +43,9 @@ snt main()
     size_t npoints = 400000;
     std::cout << "constructing KDTree with " << npoints << " points." << std::endl;
 
-    td::vector<point_t> points = getListofGeneratedVectors(npoints);
+    std::vector<point_t> points = getListofGeneratedVectors(npoints);
 
-    uto start = std::chrono::high_resolution_clock::now();
+    auto start = std::chrono::high_resolution_clock::now();
     KDTree tree(points);
     auto stop = std::chrono::high_resolution_clock::now();
     auto timespan = std::chrono::duration<double>(stop - start);

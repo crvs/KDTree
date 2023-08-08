@@ -108,11 +108,12 @@ class KDTree {
     pointIndex nearest_pointIndex(const point_t &pt);
 
    private:
-    pointIndexArr neighborhood_(  //
+    void neighborhood_(  //
         const KDNodePtr &branch,  //
         const point_t &pt,        //
         const double &rad,        //
-        const size_t &level       //
+        const size_t &level,      //
+	pointIndexArr& nbh
     );
 
    public:
