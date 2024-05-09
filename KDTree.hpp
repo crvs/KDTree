@@ -75,54 +75,73 @@ inline void sort_on_idx(pointIndexArr::iterator const&, //
 using pointVec = std::vector<point_t>;
 
 class KDTree {
-    KDNodePtr root;
-    KDNodePtr leaf;
-
-    KDNodePtr make_tree(pointIndexArr::iterator const& begin, //
-                        pointIndexArr::iterator const& end,   //
-                        size_t const& length,                 //
-                        size_t const& level                   //
-    );
 
   public:
     KDTree() = default;
+
+    // Build a KDtree
     explicit KDTree(pointVec point_array);
 
+    // Get the point which lies closest to the input point.
+    // @param pt input point.
+    point_t nearest_point(point_t const& pt);
+
+    // Get the index of the point which lies closest to the input point.
+    //
+    // @param pt input point.
+    size_t nearest_index(point_t const& pt);
+
+    // Get the point and its index which lies closest to the input point.
+    //
+    // @param pt input point.
+    pointIndex nearest_pointIndex(point_t const& pt);
+
+    // Get both the point and the index of the point closest to the input
+    // point.
+    //
+    // @param pt input point.
+    // @param rad input radius.
+    //
+    // @returns a vector containing the points and their respective indices
+    // which are at a distance smaller than rad to the input point.
+    pointIndexArr neighborhood(point_t const& pt, double const& rad);
+
+    // Get the points that are at a distance to the input point which is
+    // smaller than the input radius.
+    //
+    // @param pt input point.
+    // @param rad input radius.
+    //
+    // @returns a vector containing the points which are at a distance smaller
+    // than rad to the input point.
+    pointVec neighborhood_points(point_t const& pt, double const& rad);
+
+    // Get the indices of points that are at a distance to the input point
+    // which is smaller than the input radius.
+    //
+    // @param pt input point.
+    // @param rad input radius.
+    //
+    // @returns a vector containing the indices of the points which are at a
+    // distance smaller than rad to the input point.
+    indexArr neighborhood_indices(point_t const& pt, double const& rad);
+
   private:
-    KDNodePtr nearest_(          //
-        KDNodePtr const& branch, //
-        point_t const& pt,       //
-        size_t const& level,     //
-        KDNodePtr const& best,   //
-        double const& best_dist  //
-    );
+    KDNodePtr make_tree(pointIndexArr::iterator const& begin,
+                        pointIndexArr::iterator const& end,
+                        size_t const& length, size_t const& level);
+
+    KDNodePtr nearest_(KDNodePtr const& branch, point_t const& pt,
+                       size_t const& level, KDNodePtr const& best,
+                       double const& best_dist);
 
     // default caller
     KDNodePtr nearest_(point_t const& pt);
 
-  public:
-    point_t nearest_point(point_t const& pt);
-    size_t nearest_index(point_t const& pt);
-    pointIndex nearest_pointIndex(point_t const& pt);
+    void neighborhood_(KDNodePtr const& branch, point_t const& pt,
+                       double const& rad, size_t const& level,
+                       pointIndexArr& nbh);
 
-  private:
-    void neighborhood_(          //
-        KDNodePtr const& branch, //
-        point_t const& pt,       //
-        double const& rad,       //
-        size_t const& level,     //
-        pointIndexArr& nbh);
-
-  public:
-    pointIndexArr neighborhood( //
-        point_t const& pt,      //
-        double const& rad);
-
-    pointVec neighborhood_points( //
-        point_t const& pt,        //
-        double const& rad);
-
-    indexArr neighborhood_indices( //
-        point_t const& pt,         //
-        double const& rad);
+    KDNodePtr root_;
+    KDNodePtr leaf_;
 };

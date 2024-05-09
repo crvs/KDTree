@@ -100,8 +100,8 @@ int main() {
         std::cout << "Accuracy (tested with " << sizes
                   << " datasets per iter): "
                   << ((correct * 100.0) / (sizes * nIter))
-                  << "%. Total Number of correct queries: " << (int)(correct / nIter)
-                  << " / " << sizes << std::endl;
+                  << "%. Total Number of correct queries: "
+                  << (int)(correct / nIter) << " / " << sizes << std::endl;
         std::cout
             << "Total query time: { bruteForce: "
             << std::chrono::duration_cast<secondsf>(bruteForceRetTotalTime)

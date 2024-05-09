@@ -20,4 +20,4 @@ clean:
 	rm -rf lib
 
 format:
-	find -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | xargs clang-format-14 -style=file:.clang-format.yml -i
+	git ls-tree -r --full-tree --name-only HEAD | grep '\.\(hpp\|h\|cpp\)$$' | xargs clang-format-14 -style=file:.clang-format.yml -i
