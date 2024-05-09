@@ -1,23 +1,25 @@
 #pragma once
 
-/*
- * file: KDTree.hpp
- * author: J. Frederico Carvalho
- *
- * This is an adaptation of the KD-tree implementation in rosetta code
- *  https://rosettacode.org/wiki/K-d_tree
- * It is a reimplementation of the C code using C++.
- * It also includes a few more queries than the original
- *
- */
+/// @file KDTree.hpp
+/// @author J. Frederico Carvalho
+///
+/// This is an adaptation of the KD-tree implementation in rosetta code
+///  https://rosettacode.org/wiki/K-d_tree
+/// It is a reimplementation of the C code using C++.
+/// It also includes a few more queries than the original
 
 #include <algorithm>
 #include <functional>
 #include <memory>
 #include <vector>
 
+/// The point type (vector of double precision floats)
 using point_t = std::vector<double>;
+
+/// Array of indices
 using indexArr = std::vector<size_t>;
+
+/// Pair of point and Index
 using pointIndex = typename std::pair<std::vector<double>, size_t>;
 
 class KDNode {
@@ -79,51 +81,51 @@ class KDTree {
   public:
     KDTree() = default;
 
-    // Build a KDtree
+    /// Build a KDtree
     explicit KDTree(pointVec point_array);
 
-    // Get the point which lies closest to the input point.
-    // @param pt input point.
+    /// Get the point which lies closest to the input point.
+    /// @param pt input point.
     point_t nearest_point(point_t const& pt);
 
-    // Get the index of the point which lies closest to the input point.
-    //
-    // @param pt input point.
+    /// Get the index of the point which lies closest to the input point.
+    ///
+    /// @param pt input point.
     size_t nearest_index(point_t const& pt);
 
-    // Get the point and its index which lies closest to the input point.
-    //
-    // @param pt input point.
+    /// Get the point and its index which lies closest to the input point.
+    ///
+    /// @param pt input point.
     pointIndex nearest_pointIndex(point_t const& pt);
 
-    // Get both the point and the index of the point closest to the input
-    // point.
-    //
-    // @param pt input point.
-    // @param rad input radius.
-    //
-    // @returns a vector containing the points and their respective indices
-    // which are at a distance smaller than rad to the input point.
+    /// Get both the point and the index of the point closest to the input
+    /// point.
+    ///
+    /// @param pt input point.
+    /// @param rad input radius.
+    ///
+    /// @returns a vector containing the points and their respective indices
+    /// which are at a distance smaller than rad to the input point.
     pointIndexArr neighborhood(point_t const& pt, double const& rad);
 
-    // Get the points that are at a distance to the input point which is
-    // smaller than the input radius.
-    //
-    // @param pt input point.
-    // @param rad input radius.
-    //
-    // @returns a vector containing the points which are at a distance smaller
-    // than rad to the input point.
+    /// Get the points that are at a distance to the input point which is
+    /// smaller than the input radius.
+    ///
+    /// @param pt input point.
+    /// @param rad input radius.
+    ///
+    /// @returns a vector containing the points which are at a distance smaller
+    /// than rad to the input point.
     pointVec neighborhood_points(point_t const& pt, double const& rad);
 
-    // Get the indices of points that are at a distance to the input point
-    // which is smaller than the input radius.
-    //
-    // @param pt input point.
-    // @param rad input radius.
-    //
-    // @returns a vector containing the indices of the points which are at a
-    // distance smaller than rad to the input point.
+    /// Get the indices of points that are at a distance to the input point
+    /// which is smaller than the input radius.
+    ///
+    /// @param pt input point.
+    /// @param rad input radius.
+    ///
+    /// @returns a vector containing the indices of the points which are at a
+    /// distance smaller than rad to the input point.
     indexArr neighborhood_indices(point_t const& pt, double const& rad);
 
   private:
