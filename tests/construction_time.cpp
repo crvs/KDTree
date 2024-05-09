@@ -38,9 +38,9 @@ std::vector<std::vector<double>> getListofGeneratedVectors(size_t length)
 int main()
 {
     // seed
-	srand(5);
+    srand(5);
 
-    size_t npoints = 400000;
+    size_t npoints = 4'000'000;
     std::cout << "constructing KDTree with " << npoints << " points." << std::endl;
 
     std::vector<point_t> points = getListofGeneratedVectors(npoints);
@@ -49,6 +49,6 @@ int main()
     KDTree tree(points);
     auto stop = std::chrono::high_resolution_clock::now();
     auto timespan = std::chrono::duration<double>(stop - start);
-    std::cout << "it took " << timespan.count() << " seconds.";
+    std::cout << "it took " << timespan.count() << " seconds." << std::endl;
     return 0;
 }
