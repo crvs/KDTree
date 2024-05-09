@@ -32,7 +32,7 @@ int main() {
     // seed
     srand(5);
 
-    size_t npoints = 4'000'000;
+    size_t npoints = 1'000'000;
     std::cout << "constructing KDTree with " << npoints << " points..."
               << std::endl;
 

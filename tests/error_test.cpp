@@ -102,6 +102,9 @@ int main() {
                   << ((correct * 100.0) / (sizes * nIter))
                   << "%. Total Number of correct queries: "
                   << (int)(correct / nIter) << " / " << sizes << std::endl;
+        if (correct != nIter * sizes) {
+            return 1;
+        }
         std::cout
             << "Total query time: { bruteForce: "
             << std::chrono::duration_cast<secondsf>(bruteForceRetTotalTime)

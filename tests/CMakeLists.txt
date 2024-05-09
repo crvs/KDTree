@@ -7,3 +7,8 @@ target_link_libraries(error_test KDTree)
 
 add_executable(toy_test toy_test.cpp)
 target_link_libraries(toy_test KDTree)
+
+add_test(NAME construction_time COMMAND $<TARGET_FILE:construction_time>)
+add_test(NAME error_test COMMAND $<TARGET_FILE:error_test>)
+add_test(NAME toy_test COMMAND $<TARGET_FILE:toy_test>)
+

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.9)
 project(KDTree CXX)
 
 set(CMAKE_CXX_COMPILER             "/usr/bin/g++")
@@ -23,4 +23,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 include_directories(.)
 add_library(KDTree SHARED KDTree.cpp)
 target_include_directories(KDTree PUBLIC .)
+
+include(CTest)
+enable_testing()
 add_subdirectory(tests)
