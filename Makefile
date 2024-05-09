@@ -18,3 +18,6 @@ install: KDTree
 clean:
 	rm -f KDTree.o libKDTree.a
 	rm -rf lib
+
+format:
+	find -name '*.cpp' -or -name '*.hpp' -or -name '*.h' | xargs clang-format-14 -style=file:.clang-format.yml -i
