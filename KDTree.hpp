@@ -163,15 +163,12 @@ class KDTree {
                         pointIndexArr::iterator const& end,
                         size_t const& level);
 
-    KDNodePtr
-    nearest_(KDNodePtr const& branch, point_t const& pt, size_t const& level,
-             KDNodePtr const& best, double const& best_dist,
-             size_t const& num_nearest,
-             std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
+    void knearest_(KDNodePtr const& branch, point_t const& pt,
+                   size_t const& level, size_t const& num_nearest,
+                   std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
 
     void node_query_(KDNodePtr const& branch, point_t const& pt,
-                     size_t const& level, KDNodePtr& best, double& best_dist,
-                     size_t const& num_nearest,
+                     size_t const& level, size_t const& num_nearest,
                      std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
 
     // default caller
