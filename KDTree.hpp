@@ -131,7 +131,7 @@ class KDTree {
   private:
     KDNodePtr make_tree(pointIndexArr::iterator const& begin,
                         pointIndexArr::iterator const& end,
-                        size_t const& length, size_t const& level);
+                        size_t const& level);
 
     KDNodePtr nearest_(KDNodePtr const& branch, point_t const& pt,
                        size_t const& level, KDNodePtr const& best,

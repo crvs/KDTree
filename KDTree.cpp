@@ -9,6 +9,7 @@
 /// smaller than some given distance to a point.
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <functional>
 #include <iterator>
@@ -70,7 +71,7 @@ inline double dist(KDNodePtr const& a, KDNodePtr const& b) {
     return std::sqrt(dist2(a, b));
 }
 
-comparer::comparer(size_t idx_) : idx{idx_} {};
+comparer::comparer(size_t idx_) : idx{idx_} {}
 
 inline bool comparer::compare_idx(pointIndex const& a, pointIndex const& b) {
     return (a.first.at(idx) < b.first.at(idx));
@@ -92,58 +93,32 @@ using pointVec = std::vector<point_t>;
 
 KDNodePtr KDTree::make_tree(pointIndexArr::iterator const& begin,
                             pointIndexArr::iterator const& end,
-                            size_t const& length, size_t const& level) {
+                            size_t const& level) {
     if (begin == end) {
-        return NewKDNodePtr(); // empty tree
+        return leaf_; // empty tree
     }
 
-    size_t dim = begin->first.size();
+    assert(std::distance(begin, end) > 0);
 
-    if (length > 1) {
-        sort_on_idx(begin, end, level);
-    }
+    size_t const dim = begin->first.size();
+    sort_on_idx(begin, end, level);
 
-    auto middle = begin + (length / 2);
+    auto const num_points = std::distance(begin, end);
+    auto const middle{std::next(begin, num_points / 2)};
 
-    auto l_begin = begin;
-    auto l_end = middle;
-    auto r_begin = middle + 1;
-    auto r_end = end;
-
-    size_t l_len = length / 2;
-    size_t r_len = length - l_len - 1;
-
-    KDNodePtr left;
-    if (l_len > 0 && dim > 0) {
-        left = make_tree(l_begin, l_end, l_len, (level + 1) % dim);
-    } else {
-        left = leaf_;
-    }
-    KDNodePtr right;
-    if (r_len > 0 && dim > 0) {
-        right = make_tree(r_begin, r_end, r_len, (level + 1) % dim);
-    } else {
-        right = leaf_;
-    }
-
-    // KDNode result = KDNode();
+    size_t const next_level{(level + 1) % dim};
+    KDNodePtr const left{make_tree(begin, middle, next_level)};
+    KDNodePtr const right{make_tree(std::next(middle), end, next_level)};
     return std::make_shared<KDNode>(*middle, left, right);
 }
 
 KDTree::KDTree(pointVec point_array) : leaf_{std::make_shared<KDNode>()} {
-    // iterators
     pointIndexArr arr;
     for (size_t i = 0; i < point_array.size(); i++) {
-        arr.push_back(pointIndex(point_array.at(i), i));
+        arr.emplace_back(point_array.at(i), i);
     }
 
-    auto begin = arr.begin();
-    auto end = arr.end();
-
-    size_t length = arr.size();
-    size_t level = 0; // starting
-
-    root_ = KDTree::make_tree(begin, end, length, level);
+    root_ = KDTree::make_tree(arr.begin(), arr.end(), 0 /* level */);
 }
 
 KDNodePtr KDTree::nearest_(KDNodePtr const& branch, point_t const& pt,
@@ -205,7 +180,7 @@ KDNodePtr KDTree::nearest_(KDNodePtr const& branch, point_t const& pt,
     }
 
     return best_l;
-};
+}
 
 // default caller
 KDNodePtr KDTree::nearest_(point_t const& pt) {
@@ -216,15 +191,15 @@ KDNodePtr KDTree::nearest_(point_t const& pt) {
                     level,        // start from level 0
                     root_,        // best is the root
                     branch_dist); // best_dist = branch_dist
-};
+}
 
 point_t KDTree::nearest_point(point_t const& pt) {
-    return point_t(*nearest_(pt));
-};
+    return static_cast<point_t>(*nearest_(pt));
+}
 
 size_t KDTree::nearest_index(point_t const& pt) {
-    return size_t(*nearest_(pt));
-};
+    return static_cast<size_t>(*nearest_(pt));
+}
 
 pointIndex KDTree::nearest_pointIndex(point_t const& pt) {
     KDNodePtr Nearest = nearest_(pt);
@@ -268,7 +243,7 @@ void KDTree::neighborhood_(KDNodePtr const& branch, point_t const& pt,
     if (dx2 < r2) {
         neighborhood_(other, pt, rad, (level + 1) % dim, nbh);
     }
-};
+}
 
 pointIndexArr KDTree::neighborhood(point_t const& pt, double const& rad) {
     size_t level = 0;
@@ -281,8 +256,7 @@ pointVec KDTree::neighborhood_points(point_t const& pt, double const& rad) {
     size_t level = 0;
     auto nbh = std::make_shared<pointIndexArr>();
     neighborhood_(root_, pt, rad, level, *nbh);
-    pointVec nbhp;
-    nbhp.resize(nbh->size());
+    pointVec nbhp{nbh->size()};
     std::transform(nbh->begin(), nbh->end(), nbhp.begin(),
                    [](pointIndex x) { return x.first; });
     return nbhp;
@@ -292,8 +266,7 @@ indexArr KDTree::neighborhood_indices(point_t const& pt, double const& rad) {
     size_t level = 0;
     auto nbh = std::make_shared<pointIndexArr>();
     neighborhood_(root_, pt, rad, level, *nbh);
-    indexArr nbhi;
-    nbhi.resize(nbh->size());
+    indexArr nbhi{nbh->size()};
     std::transform(nbh->begin(), nbh->end(), nbhi.begin(),
                    [](pointIndex x) { return x.second; });
     return nbhi;
