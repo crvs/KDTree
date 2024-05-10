@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -133,9 +134,14 @@ class KDTree {
                         pointIndexArr::iterator const& end,
                         size_t const& level);
 
-    KDNodePtr nearest_(KDNodePtr const& branch, point_t const& pt,
-                       size_t const& level, KDNodePtr const& best,
-                       double const& best_dist);
+    KDNodePtr
+    nearest_(KDNodePtr const& branch, point_t const& pt, size_t const& level,
+             KDNodePtr const& best, double const& best_dist,
+             std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
+
+    void node_query_(KDNodePtr const& branch, point_t const& pt,
+                     size_t const& level, KDNodePtr& best, double& best_dist,
+                     std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
 
     // default caller
     KDNodePtr nearest_(point_t const& pt);

@@ -89,6 +89,13 @@ inline void sort_on_idx(pointIndexArr::iterator const& begin,
                      std::bind(&comparer::compare_idx, comp, _1, _2));
 }
 
+namespace detail {
+inline bool compare_node_distance(std::pair<KDNodePtr, double> a,
+                                  std::pair<KDNodePtr, double> b) {
+    return a.second < b.second;
+}
+} // namespace detail
+
 using pointVec = std::vector<point_t>;
 
 KDNodePtr KDTree::make_tree(pointIndexArr::iterator const& begin,
@@ -121,77 +128,90 @@ KDTree::KDTree(pointVec point_array) : leaf_{std::make_shared<KDNode>()} {
     root_ = KDTree::make_tree(arr.begin(), arr.end(), 0 /* level */);
 }
 
-KDNodePtr KDTree::nearest_(KDNodePtr const& branch, point_t const& pt,
-                           size_t const& level, KDNodePtr const& best,
-                           double const& best_dist) {
-    double d, dx, dx2;
-
-    if (!bool(*branch)) {
-        return NewKDNodePtr(); // basically, null
+void KDTree::node_query_(
+    KDNodePtr const& branch, point_t const& pt, size_t const& level,
+    KDNodePtr& best, double& best_dist,
+    std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
+    auto const further =
+        nearest_(branch, pt, level, best, best_dist, k_nearest_buffer);
+    if (further->x.empty()) {
+        return;
     }
-
-    point_t branch_pt(*branch);
-    size_t dim = branch_pt.size();
-
-    d = dist2(branch_pt, pt);
-    dx = branch_pt.at(level) - pt.at(level);
-    dx2 = dx * dx;
-
-    KDNodePtr best_l = best;
-    double best_dist_l = best_dist;
-
-    if (d < best_dist) {
-        best_dist_l = d;
-        best_l = branch;
+    double dl = dist2(further->x, pt);
+    if (dl < best_dist) {
+        best_dist = dl;
+        best = further;
     }
+    auto const node_distance = std::make_pair(further, dl);
+    k_nearest_buffer.insert(
+        std::upper_bound(k_nearest_buffer.begin(), k_nearest_buffer.end(),
+                         node_distance, detail::compare_node_distance),
+        node_distance);
+}
 
-    size_t next_lv = (level + 1) % dim;
-    KDNodePtr section;
-    KDNodePtr other;
+KDNodePtr
+KDTree::nearest_(KDNodePtr const& branch, point_t const& pt,
+		size_t const& level, KDNodePtr const& best,
+		double const& best_dist,
+		std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
+	double d, dx, dx2;
 
-    // select which branch makes sense to check
-    if (dx > 0) {
-        section = branch->left;
-        other = branch->right;
-    } else {
-        section = branch->right;
-        other = branch->left;
-    }
+	if (!bool(*branch)) {
+		return NewKDNodePtr(); // basically, null
+	}
 
-    // keep nearest neighbor from further down the tree
-    KDNodePtr further = nearest_(section, pt, next_lv, best_l, best_dist_l);
-    if (!further->x.empty()) {
-        double dl = dist2(further->x, pt);
-        if (dl < best_dist_l) {
-            best_dist_l = dl;
-            best_l = further;
-        }
-    }
-    // only check the other branch if it makes sense to do so
-    if (dx2 < best_dist_l) {
-        further = nearest_(other, pt, next_lv, best_l, best_dist_l);
-        if (!further->x.empty()) {
-            double dl = dist2(further->x, pt);
-            if (dl < best_dist_l) {
-                best_dist_l = dl;
-                best_l = further;
-            }
-        }
-    }
+	point_t branch_pt(*branch);
+	size_t dim = branch_pt.size();
 
-    return best_l;
+	d = dist2(branch_pt, pt);
+	dx = branch_pt.at(level) - pt.at(level);
+	dx2 = dx * dx;
+
+	KDNodePtr best_l = best;
+	double best_dist_l = best_dist;
+
+	if (d < best_dist) {
+		best_dist_l = d;
+		best_l = branch;
+	}
+
+	size_t next_lv = (level + 1) % dim;
+	KDNodePtr section;
+	KDNodePtr other;
+
+	// select which branch makes sense to check
+	if (dx > 0) {
+		section = branch->left;
+		other = branch->right;
+	} else {
+		section = branch->right;
+		other = branch->left;
+	}
+
+	// keep nearest neighbor from further down the tree
+	node_query_(section, pt, next_lv, best_l, best_dist_l, k_nearest_buffer);
+	// only check the other branch if it makes sense to do so
+	if (dx2 < best_dist_l) {
+		node_query_(other, pt, next_lv, best_l, best_dist_l, k_nearest_buffer);
+	}
+
+	return best_l;
 }
 
 // default caller
 KDNodePtr KDTree::nearest_(point_t const& pt) {
-    size_t level = 0;
-    double branch_dist = dist2(point_t(*root_), pt);
-    return nearest_(root_,        // beginning of tree
-                    pt,           // point we are querying
-                    level,        // start from level 0
-                    root_,        // best is the root
-                    branch_dist); // best_dist = branch_dist
-}
+	size_t level = 0;
+	double branch_dist = dist2(point_t(*root_), pt);
+    std::list<std::pair<KDNodePtr, double>> k_buffer{};
+
+    return nearest_(root_,       // beginning of tree
+                    pt,          // point we are querying
+                    level,       // start from level 0
+                    root_,       // best is the root
+                    branch_dist, // best_dist = branch_dist
+                    k_buffer     // list of k nearest neigbours (to be filled)
+    );
+};
 
 point_t KDTree::nearest_point(point_t const& pt) {
     return static_cast<point_t>(*nearest_(pt));
