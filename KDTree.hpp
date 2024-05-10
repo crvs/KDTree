@@ -107,8 +107,8 @@ class KDTree {
     ///
     /// @returns a vector containing the points and their respective indices
     /// which are at a distance smaller than rad to the input point.
-    pointIndexArr nearest_pointIndex(point_t const& pt,
-                                     size_t const& num_nearest);
+    pointIndexArr nearest_pointIndices(point_t const& pt,
+                                       size_t const& num_nearest);
 
     /// Get the nearest set of points to the given input point.
     ///
@@ -171,6 +171,7 @@ class KDTree {
 
     void node_query_(KDNodePtr const& branch, point_t const& pt,
                      size_t const& level, KDNodePtr& best, double& best_dist,
+                     size_t const& num_nearest,
                      std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer);
 
     // default caller
