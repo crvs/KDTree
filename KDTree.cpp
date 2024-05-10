@@ -132,8 +132,9 @@ void KDTree::node_query_(
     KDNodePtr const& branch, point_t const& pt, size_t const& level,
     KDNodePtr& best, double& best_dist,
     std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
-    auto const further =
-        nearest_(branch, pt, level, best, best_dist, k_nearest_buffer);
+    auto const further = nearest_(branch, pt, level, best, best_dist,
+                                  0, // ATTENTION NEED TO REPLACE THIS
+                                  k_nearest_buffer);
     if (further->x.empty()) {
         return;
     }
@@ -151,10 +152,10 @@ void KDTree::node_query_(
 
 KDNodePtr
 KDTree::nearest_(KDNodePtr const& branch, point_t const& pt,
-		size_t const& level, KDNodePtr const& best,
-		double const& best_dist,
-		std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
-	double d, dx, dx2;
+                 size_t const& level, KDNodePtr const& best,
+                 double const& best_dist, size_t const& num_nearest,
+                 std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
+    double d, dx, dx2;
 
 	if (!bool(*branch)) {
 		return NewKDNodePtr(); // basically, null
@@ -209,7 +210,8 @@ KDNodePtr KDTree::nearest_(point_t const& pt) {
                     level,       // start from level 0
                     root_,       // best is the root
                     branch_dist, // best_dist = branch_dist
-                    k_buffer     // list of k nearest neigbours (to be filled)
+                    0, // number of nearest neighbours to return in k_buffer
+                    k_buffer // list of k nearest neigbours (to be filled)
     );
 };
 
