@@ -12,6 +12,27 @@
 
 double getNum() { return ((double)rand() / (RAND_MAX)); }
 using secondsf = std::chrono::duration<float>;
+using pointDistance = std::pair<std::vector<double>, double>;
+bool samePt(std::vector<double> v1, std::vector<double> v2) {
+    auto const result = std::equal(v1.begin(), v1.end(), v2.begin(),
+                                   [](auto const& p1, auto const& p2) {
+                                       std::cout << std::abs(p1 - p2) << " ";
+                                       return std::abs(p1 - p2) < 0.1;
+                                   });
+    std::cout << std::endl;
+    if (!result) {
+        std::cout << "Different points: [ ";
+        for (auto const v : v1) {
+            std::cout << v << " ";
+        }
+        std::cout << "] [ ";
+        for (auto const v : v2) {
+            std::cout << v << " ";
+        }
+        std::cout << "]" << std::endl;
+    }
+    return result;
+}
 
 std::vector<double> generateVector() {
     std::vector<double> temp(DIM);
@@ -56,6 +77,7 @@ int main() {
         std::chrono::nanoseconds bruteForceRetTotalTime{};
 
         int correct = 0;
+        int const k = 4;
         for (int i = 0; i < nIter; i++) {
             // generate test points to build a tree
             points = getListofGeneratedVectors(sizes);
@@ -67,31 +89,41 @@ int main() {
             pointToRetrieve = getListofGeneratedVectors(sizes);
 
             for (auto& vals : pointToRetrieve) {
-                double minSumSqdErr = std::numeric_limits<double>::max();
                 std::vector<double> groundTruthVec(DIM);
 
                 auto bf_start = std::chrono::high_resolution_clock::now();
+                std::list<pointDistance> point_distances{};
                 for (auto& gtvals : points) {
                     double sumSqdErr = sumSqrdErr(gtvals, vals);
-                    if (sumSqdErr < minSumSqdErr) {
-                        minSumSqdErr = sumSqdErr;
-                        groundTruthVec = gtvals;
+                    pointDistance const point_distance =
+                        std::make_pair(gtvals, sumSqdErr);
+                    point_distances.insert(
+                        std::upper_bound(point_distances.begin(),
+                                         point_distances.end(), point_distance,
+                                         [](auto const& a, auto const& b) {
+                                             return a.second < b.second;
+                                         }),
+                        point_distance);
+                    if (point_distances.size() > 10) {
+                        point_distances.pop_back();
                     }
                 }
                 bruteForceRetTotalTime +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(
                         std::chrono::high_resolution_clock::now() - bf_start);
 
-                std::vector<double> checkVec(DIM);
-
                 auto kdt_start = std::chrono::high_resolution_clock::now();
-                checkVec = tree.nearest_point(vals);
+                auto const checkVec = tree.nearest_points(vals, k);
                 kdTreeRetTotalTime +=
                     std::chrono::duration_cast<std::chrono::nanoseconds>(
                         std::chrono::high_resolution_clock::now() - kdt_start);
 
-                if (std::equal(groundTruthVec.begin(), groundTruthVec.end(),
-                               checkVec.begin())) {
+                if (checkVec.size() == k &&
+                    std::equal(point_distances.begin(), point_distances.end(),
+                               checkVec.begin(),
+                               [](auto const& v1, auto const& v2) {
+                                   return samePt(v1.first, v2);
+                               })) {
                     correct += 1;
                 }
             }
