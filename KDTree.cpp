@@ -124,7 +124,6 @@ KDTree::KDTree(pointVec point_array) : leaf_{std::make_shared<KDNode>()} {
     for (size_t i = 0; i < point_array.size(); i++) {
         arr.emplace_back(point_array.at(i), i);
     }
-
     root_ = KDTree::make_tree(arr.begin(), arr.end(), 0 /* level */);
 }
 
@@ -132,14 +131,20 @@ void KDTree::node_query_(
     KDNodePtr const& branch, point_t const& pt, size_t const& level,
     size_t const& num_nearest,
     std::list<std::pair<KDNodePtr, double>>& k_nearest_buffer) {
+    if (!static_cast<bool>(*branch)) {
+        return;
+    }
     knearest_(branch, pt, level, num_nearest, k_nearest_buffer);
     double const dl = dist2(branch->x, pt);
+    // assert(*branch);
     auto const node_distance = std::make_pair(branch, dl);
-    k_nearest_buffer.insert(
+    auto const insert_it =
         std::upper_bound(k_nearest_buffer.begin(), k_nearest_buffer.end(),
-                         node_distance, detail::compare_node_distance),
-        node_distance);
-
+                         node_distance, detail::compare_node_distance);
+    if (insert_it == k_nearest_buffer.end() ||
+        insert_it->first != std::next(insert_it)->first) {
+        k_nearest_buffer.insert(insert_it, node_distance);
+    }
     if (k_nearest_buffer.size() > num_nearest) {
         k_nearest_buffer.pop_back();
     }
@@ -155,6 +160,7 @@ void KDTree::knearest_(
 
     point_t branch_pt(*branch);
     size_t dim = branch_pt.size();
+    assert(dim != 0);
 
     double const dx = branch_pt.at(level) - pt.at(level);
     double const dx2 = dx * dx;

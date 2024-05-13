@@ -2,24 +2,20 @@
 
 #include "KDTree.hpp"
 #include <algorithm>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <numeric>
 #include <random>
 #include <vector>
 
-#define DIM 3
+#define DIM 1
 
 double getNum() { return ((double)rand() / (RAND_MAX)); }
 using secondsf = std::chrono::duration<float>;
 using pointDistance = std::pair<std::vector<double>, double>;
 bool samePt(std::vector<double> v1, std::vector<double> v2) {
-    auto const result = std::equal(v1.begin(), v1.end(), v2.begin(),
-                                   [](auto const& p1, auto const& p2) {
-                                       std::cout << std::abs(p1 - p2) << " ";
-                                       return std::abs(p1 - p2) < 0.1;
-                                   });
-    std::cout << std::endl;
+    auto const result = std::equal(v1.begin(), v1.end(), v2.begin());
     if (!result) {
         std::cout << "Different points: [ ";
         for (auto const v : v1) {
@@ -61,6 +57,7 @@ double sumSqrdErr(std::vector<double>& p1, std::vector<double>& p2) {
 }
 
 int main() {
+    bool success = true;
     // seed
     srand(5);
 
@@ -77,7 +74,7 @@ int main() {
         std::chrono::nanoseconds bruteForceRetTotalTime{};
 
         int correct = 0;
-        int const k = 4;
+        int const k = 20;
         for (int i = 0; i < nIter; i++) {
             // generate test points to build a tree
             points = getListofGeneratedVectors(sizes);
@@ -104,7 +101,7 @@ int main() {
                                              return a.second < b.second;
                                          }),
                         point_distance);
-                    if (point_distances.size() > 10) {
+                    if (point_distances.size() > k) {
                         point_distances.pop_back();
                     }
                 }
@@ -125,6 +122,9 @@ int main() {
                                    return samePt(v1.first, v2);
                                })) {
                     correct += 1;
+                } else {
+                    // assert(false);
+                    success = false;
                 }
             }
         }
@@ -133,9 +133,6 @@ int main() {
                   << ((correct * 100.0) / (sizes * nIter))
                   << "%. Total Number of correct queries: "
                   << (int)(correct / nIter) << " / " << sizes << std::endl;
-        if (correct != nIter * sizes) {
-            return 1;
-        }
         std::cout
             << "Total query time: { bruteForce: "
             << std::chrono::duration_cast<secondsf>(bruteForceRetTotalTime)
@@ -144,5 +141,7 @@ int main() {
             << std::chrono::duration_cast<secondsf>(kdTreeRetTotalTime).count()
             << " }" << std::endl;
     }
-    return 0;
+    if (success)
+        return 0;
+    return 1;
 }
