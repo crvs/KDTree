@@ -16,7 +16,7 @@ using secondsf = std::chrono::duration<float>;
 using pointDistance = std::pair<std::vector<double>, double>;
 bool samePt(std::vector<double> v1, std::vector<double> v2) {
     auto const result = std::equal(v1.begin(), v1.end(), v2.begin());
-    if (!result) {
+    if (!result && false) {
         std::cout << "Different points: [ ";
         for (auto const v : v1) {
             std::cout << v << " ";
@@ -46,7 +46,8 @@ std::vector<std::vector<double>> getListofGeneratedVectors(int length) {
     return temp;
 }
 
-double sumSqrdErr(std::vector<double>& p1, std::vector<double>& p2) {
+double sumSqrdErr(std::vector<double> const& p1,
+                  std::vector<double> const& p2) {
     std::vector<double> diff(DIM);
     std::vector<double> square(DIM);
     std::transform(p1.begin(), p1.end(), p2.begin(), diff.begin(),
@@ -74,7 +75,7 @@ int main() {
         std::chrono::nanoseconds bruteForceRetTotalTime{};
 
         int correct = 0;
-        int const k = 20;
+        int const k = 3;
         for (int i = 0; i < nIter; i++) {
             // generate test points to build a tree
             points = getListofGeneratedVectors(sizes);
@@ -91,9 +92,8 @@ int main() {
                 auto bf_start = std::chrono::high_resolution_clock::now();
                 std::list<pointDistance> point_distances{};
                 for (auto& gtvals : points) {
-                    double sumSqdErr = sumSqrdErr(gtvals, vals);
                     pointDistance const point_distance =
-                        std::make_pair(gtvals, sumSqdErr);
+                        std::make_pair(gtvals, sumSqrdErr(gtvals, vals));
                     point_distances.insert(
                         std::upper_bound(point_distances.begin(),
                                          point_distances.end(), point_distance,
@@ -124,6 +124,15 @@ int main() {
                     correct += 1;
                 } else {
                     // assert(false);
+                    std::cout << "Distance vectors: gt: [ ";
+                    for (auto const& pd : point_distances) {
+                        std::cout << std::log(pd.second) << " ";
+                    }
+                    std::cout << "] pred: [ ";
+                    for (auto const& v : checkVec) {
+                        std::cout << std::log(sumSqrdErr(v, vals)) << " ";
+                    }
+                    std::cout << "]" << std::endl;
                     success = false;
                 }
             }
