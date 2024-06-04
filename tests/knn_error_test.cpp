@@ -9,7 +9,7 @@
 #include <random>
 #include <vector>
 
-#define DIM 1
+#define DIM 2
 
 double getNum() { return ((double)rand() / (RAND_MAX)); }
 using secondsf = std::chrono::duration<float>;
@@ -75,7 +75,7 @@ int main() {
         std::chrono::nanoseconds bruteForceRetTotalTime{};
 
         int correct = 0;
-        int const k = 3;
+        int const k = 10;
         for (int i = 0; i < nIter; i++) {
             // generate test points to build a tree
             points = getListofGeneratedVectors(sizes);

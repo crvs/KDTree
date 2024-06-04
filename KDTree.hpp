@@ -55,10 +55,6 @@ KDNodePtr NewKDNodePtr();
 inline double dist2(point_t const&, point_t const&);
 inline double dist2(KDNodePtr const&, KDNodePtr const&);
 
-// euclidean distance
-inline double dist(point_t const&, point_t const&);
-inline double dist(KDNodePtr const&, KDNodePtr const&);
-
 // Need for sorting
 class comparer {
   public:
@@ -175,7 +171,7 @@ class KDTree {
     KDNodePtr nearest_(point_t const& pt);
 
     void neighborhood_(KDNodePtr const& branch, point_t const& pt,
-                       double const& rad, size_t const& level,
+                       double const& rad2, size_t const& level,
                        pointIndexArr& nbh);
 
     KDNodePtr root_;

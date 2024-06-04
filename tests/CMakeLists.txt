@@ -1,4 +1,3 @@
-
 add_executable(construction_time construction_time.cpp)
 target_link_libraries(construction_time KDTree)
 
@@ -16,3 +15,4 @@ add_test(NAME error_test COMMAND $<TARGET_FILE:error_test>)
 add_test(NAME knn_error_test COMMAND $<TARGET_FILE:knn_error_test>)
 add_test(NAME toy_test COMMAND $<TARGET_FILE:toy_test>)
 
+add_custom_target(check ${CMAKE_CTEST_COMMAND} DEPENDS construction_time error_test knn_error_test toy_test)
