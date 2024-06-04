@@ -167,7 +167,8 @@ void KDTree::knearest_(
     node_query_(close_branch, pt, next_level, num_nearest, k_nearest_buffer);
 
     // only check the other branch if it makes sense to do so
-    if (dx2 < k_nearest_buffer.back().second || k_nearest_buffer.size() < num_nearest) {
+    if (dx2 < k_nearest_buffer.back().second ||
+        k_nearest_buffer.size() < num_nearest) {
         node_query_(far_branch, pt, next_level, num_nearest, k_nearest_buffer);
     }
 };

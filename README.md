@@ -7,8 +7,9 @@ Simple C++ static KD-Tree implementation with minimal functionality.
 - builds the tree in one go (does not support adding nodes, the tree is built from a list of points and cannot be altered afterwards)
 - points are assumed to be STL vectors
 - it provides the following queries:
-	- nearest neighbor
-	- neighbors within a given distance
+    - nearest neighbor
+    - neighbors within a given distance
+    - k nearest neighbours
 
 ## License and copyright
 
