@@ -11,6 +11,12 @@ Simple C++ static KD-Tree implementation with minimal functionality.
     - neighbors within a given distance
     - k nearest neighbours
 
+## News
+
+### Version 2.0.0
+
+- Added K nearest neighbours query.
+
 ## License and copyright
 
 © J. Frederico Carvalho
