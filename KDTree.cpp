@@ -135,6 +135,7 @@ void KDTree::node_query_(
         std::upper_bound(k_nearest_buffer.begin(), k_nearest_buffer.end(),
                          node_distance, detail::compare_node_distance);
     if (insert_it == k_nearest_buffer.end() ||
+        std::next(insert_it) == k_nearest_buffer.end() ||
         insert_it->first != std::next(insert_it)->first) {
         k_nearest_buffer.insert(insert_it, node_distance);
     }
