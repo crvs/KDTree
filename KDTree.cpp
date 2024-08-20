@@ -276,7 +276,7 @@ pointIndexArr KDTree::neighborhood(point_t const& pt, double const& rad) {
 pointVec KDTree::neighborhood_points(point_t const& pt, double const& rad) {
     auto nbh = std::make_shared<pointIndexArr>();
     neighborhood_(root_, pt, rad * rad, /*level*/ 0, *nbh);
-    pointVec nbhp{nbh->size()};
+    pointVec nbhp(nbh->size());
     auto const first = [](pointIndex const& x) { return x.first; };
     std::transform(nbh->begin(), nbh->end(), nbhp.begin(), first);
     return nbhp;
@@ -285,7 +285,7 @@ pointVec KDTree::neighborhood_points(point_t const& pt, double const& rad) {
 indexArr KDTree::neighborhood_indices(point_t const& pt, double const& rad) {
     auto nbh = std::make_shared<pointIndexArr>();
     neighborhood_(root_, pt, rad * rad, /*level*/ 0, *nbh);
-    indexArr nbhi{nbh->size()};
+    indexArr nbhi(nbh->size());
     auto const second = [](pointIndex const& x) { return x.second; };
     std::transform(nbh->begin(), nbh->end(), nbhi.begin(), second);
     return nbhi;
