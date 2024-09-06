@@ -223,7 +223,7 @@ pointIndexArr KDTree::nearest_pointIndices(point_t const& pt,
 
 pointVec KDTree::nearest_points(point_t const& pt, size_t const& num_nearest) {
     auto const k_nearest{nearest_pointIndices(pt, num_nearest)};
-    pointVec k_nearest_points{k_nearest.size()};
+    pointVec k_nearest_points(k_nearest.size());
     std::transform(k_nearest.begin(), k_nearest.end(), k_nearest_points.begin(),
                    [](pointIndex const& x) { return x.first; });
     return k_nearest_points;
@@ -231,7 +231,7 @@ pointVec KDTree::nearest_points(point_t const& pt, size_t const& num_nearest) {
 
 indexArr KDTree::nearest_indices(point_t const& pt, size_t const& num_nearest) {
     auto const k_nearest{nearest_pointIndices(pt, num_nearest)};
-    indexArr k_nearest_indices{k_nearest.size()};
+    indexArr k_nearest_indices(k_nearest.size());
     std::transform(k_nearest.begin(), k_nearest.end(),
                    k_nearest_indices.begin(),
                    [](pointIndex const& x) { return x.second; });
