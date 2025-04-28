@@ -221,6 +221,27 @@ pointIndexArr KDTree::nearest_pointIndices(point_t const& pt,
     return output;
 }
 
+std::pair<std::vector<double>, std::vector<size_t>> KDTree::nearest_indices_dists(
+    point_t const& pt, size_t const& num_nearest) {
+
+    size_t level = 0;
+    std::list<std::pair<KDNodePtr, double>> k_buffer{};
+    k_buffer.emplace_back(root_, dist2(static_cast<point_t>(*root_), pt));
+    knearest_(root_,       // beginning of tree
+              pt,          // point we are querying
+              level,       // start from level 0
+              num_nearest, // number of nearest neighbours to return in k_buffer
+              k_buffer);   // list of k nearest neigbours (to be filled)
+    std::vector<size_t> output_ids;
+    std::vector<double> output_dists;
+    std::for_each(k_buffer.begin(), k_buffer.end(),
+      [&output_ids, &output_dists](auto const& nodeptr_dist) {
+                    output_ids.push_back(nodeptr_dist.first->index);
+                    output_dists.push_back(nodeptr_dist.second);
+                  });
+    return {output_dists, output_ids};
+}
+
 pointVec KDTree::nearest_points(point_t const& pt, size_t const& num_nearest) {
     auto const k_nearest{nearest_pointIndices(pt, num_nearest)};
     pointVec k_nearest_points(k_nearest.size());

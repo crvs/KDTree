@@ -106,6 +106,16 @@ class KDTree {
     pointIndexArr nearest_pointIndices(point_t const& pt,
                                        size_t const& num_nearest);
 
+    /// Gets index of points closest to the given input point and their
+    /// respective distance from it.
+    ///
+    /// @param pt input point.
+    /// @param num_nearest Number of nearest points to return.
+    /// @returns a vector containing the point distances and a vector
+    /// containing point indices.
+    std::pair<std::vector<double>, std::vector<size_t>>
+      nearest_indices_dists(point_t const& pt, size_t const& num_nearest);
+
     /// Get the nearest set of points to the given input point.
     ///
     /// @param pt input point.
